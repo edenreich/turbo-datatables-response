@@ -1,0 +1,36 @@
+{
+  "name": "turbo-datatables-response",
+  "version": "1.0.3",
+  "description": "Server-side response generator in the correct format for datatables",
+  "main": "dist/Datatables.js",
+  "types": "dist/providers/datatables.d.ts",
+  "scripts": {
+    "dist": "webpack --progress --hide-modules --config build/webpack.dist.conf.js",
+    "watch-dist": "webpack --watch --progress --hide-modules --config build/webpack.dist.conf.js",
+    "demo-server": "nodemon --exec ts-node --compiler typescript src/server.ts"
+  },
+  "keywords": [
+    "datatables",
+    "datatables server",
+    "datatables response",
+    "datatables node",
+    "datatables typescript"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/koa": "^2.0.46",
+    "@types/koa-router": "^7.0.32",
+    "@types/mysql": "^2.15.5",
+    "@types/node": "^10.10.3",
+    "koa": "^2.5.3",
+    "koa-router": "^7.4.0",
+    "mysql": "^2.16.0",
+    "nodemon": "^1.18.4",
+    "ts-loader": "^5.1.1",
+    "ts-node": "^7.0.1",
+    "typescript": "^3.0.3",
+    "webpack": "^4.19.1",
+    "webpack-cli": "^3.1.0"
+  }
+}
