@@ -1,6 +1,6 @@
 {
   "name": "turbo-datatables-response",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Server-side response generator in the correct format for datatables",
   "main": "dist/Datatables.js",
   "types": "dist/providers/datatables.d.ts",
@@ -16,7 +16,7 @@
     "datatables node",
     "datatables typescript"
   ],
-  "author": "",
+  "author": "Eden Reich <eden.reich@gmail.com>",
   "license": "MIT",
   "devDependencies": {
     "@types/koa": "^2.0.46",
