@@ -1,6 +1,6 @@
 {
   "name": "turbo-datatables-response",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "Server-side response generator in the correct format for datatables",
   "main": "dist/Datatables.js",
   "types": "dist/providers/datatables.d.ts",

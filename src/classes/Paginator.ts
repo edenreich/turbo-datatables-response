@@ -69,7 +69,7 @@ export class Paginator
             currentPage: this.getCurrent(),
             nextPage: this.getNext(),
             prevPage: this.getPrev(),
-            lastPage: this.getTotal(),
+            lastPage: this.getTotalPages(),
             total: this.getTotal(),
             totalPages: this.getTotalPages(),
             lastPageUrl: `?page=${this.getTotalPages()}`,
