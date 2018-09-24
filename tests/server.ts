@@ -1,6 +1,6 @@
 import * as Koa from 'koa';
 import * as Router from 'koa-router';
-import { Datatables } from 'turbo-datatables-response';
+import { Datatables } from '../src/providers/datatables';
 
 const app: Koa = new Koa;
 const router: Router = new Router;

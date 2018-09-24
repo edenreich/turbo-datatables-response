@@ -1,6 +1,6 @@
 {
   "name": "turbo-datatables-response",
-  "version": "1.0.4",
+  "version": "1.0.6",
   "description": "Server-side response generator in the correct format for datatables",
   "main": "dist/Datatables.js",
   "types": "dist/providers/datatables.d.ts",
@@ -9,7 +9,7 @@
     "watch-dist": "webpack --watch --progress --hide-modules --config build/webpack.dist.conf.js",
     "demo-server": "datatables serve",
     "seed": "datatables seed --records 200",
-    "test": "mocha -r ts-node/register  tests/DatatablesTest.ts"
+    "test": "mocha --exit -r ts-node/register  tests/DatatablesTest.ts"
   },
   "keywords": [
     "datatables",

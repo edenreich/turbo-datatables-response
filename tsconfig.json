@@ -10,5 +10,8 @@
     "declarationDir": "dist",
     "strictNullChecks": true,
     "strictPropertyInitialization": false,
-  }
+  },
+  "exclude": [
+    "tests"
+  ]
 }

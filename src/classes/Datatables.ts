@@ -54,15 +54,13 @@ export class Datatables
                 Please use datatables.of(tablename) to indicate 
                 from which table the records should be fetched`
             );
-            process.exit(1);
         }
 
         if (Object.keys(this.inputs).length <= 0) {
             throw new Error(`
                 Please use datatables.setInputs(inputs) so datatables will know
-                what is needed to be fetched
+                what fields needed to be fetched
             `);
-            process.exit(1);
         }
 
         this.columns = await this.getColumnNames(this.table);
@@ -80,8 +78,7 @@ export class Datatables
             });
         }
 
-        const rowIndex = this.inputs.columnIndex || 1;
-        const column = this.columns[rowIndex].name;
+        const column = this.columns[this.inputs.columnIndex || 0].name;
         const columns = this.columns.map(column => column.name).join(',');
 
         if (this.inputs.search) {
@@ -118,9 +115,9 @@ export class Datatables
     {
         this.inputs.direction = (inputs.direction === 'desc') ? 'desc' : 'asc';
         this.inputs.search = escape(inputs.search || '');
-        this.inputs.columnIndex = parseInt(inputs.column, 10);
-        this.inputs.page = parseInt(inputs.page, 10);
-        this.inputs.limit = parseInt(inputs.limit, 10);
+        this.inputs.columnIndex = parseInt(inputs.column, 10) || 0;
+        this.inputs.page = parseInt(inputs.page, 10) || 1;
+        this.inputs.limit = parseInt(inputs.limit, 10) || 10;
         this.inputs.offset = this.inputs.limit * (this.inputs.page - 1);
     }
 
