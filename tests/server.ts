@@ -5,10 +5,7 @@ import { Datatables } from '../src/providers/datatables';
 const app: Koa = new Koa;
 const router: Router = new Router;
 
-router.get('/users', async (ctx: any, next: any): Promise<any> => {
-    // Allow access from webpack-dev-server.
-    ctx.set('Access-Control-Allow-Origin', 'http://localhost:8080');
-    
+router.get('/users', async (ctx: any, next: any): Promise<any> => {    
     const inputs = ctx.request.query;
     const dt = await Datatables();
 
