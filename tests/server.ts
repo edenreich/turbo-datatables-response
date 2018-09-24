@@ -7,12 +7,12 @@ const router: Router = new Router;
 
 router.get('/users', async (ctx: any, next: any): Promise<any> => {    
     const inputs = ctx.request.query;
-    const dt = await Datatables();
+    const datatables = await Datatables();
 
-    dt.of('test_users').only(['id', 'email']);
-    dt.setInputs(inputs);
+    datatables.of('test_users').only(['id', 'email']);
+    datatables.setInputs(inputs);
 
-    ctx.body = await dt.make();
+    ctx.body = await datatables.make();
 });
 
 app.use(router.routes());
