@@ -30,3 +30,9 @@ npm i turbo-datatables-response
     // after the promise has been resolved
     // you will get a json object to return to the client.
 ```
+
+## Todo
+
+- [ ] Allow to modify columns values.
+- [ ] Allow to modify columns labels.
+- [ ] Allow to add columns.
