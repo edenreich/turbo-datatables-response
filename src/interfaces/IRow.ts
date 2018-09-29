@@ -1,6 +1,6 @@
 import { RowDataPacket } from './RowDataPacket';
 
-export interface Row extends RowDataPacket
+export interface IRow extends RowDataPacket
 {
-    
+
 }

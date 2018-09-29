@@ -48,6 +48,7 @@ describe('DatatablesTest', () => {
     it('can change the limit of the records', async () => {
         try {
             const response = await client.get('/users?page=1&limit=50');
+            
             expect(response.status).to.be.equal(200);
             expect(response.data.hasOwnProperty('data')).to.be.equal(true);
             expect(response.data.data.length).to.be.equal(50);
@@ -55,6 +56,17 @@ describe('DatatablesTest', () => {
             console.log(err);
         } 
     });
+
+    it.only('changes the row values on the fly', async () => {
+        try {
+            const response = await client.get('/users/modified?page=1&limit=50');
+            expect(response.status).to.be.equal(200);
+            expect(response.data.data[0].name).to.have.string('Test');
+            
+        } catch (err) {
+            console.log(err);
+        }
+    }).timeout(0);
 
     it('handles load of requests using mysql pool feature', async () => {        
         const requestCount = 2000;
@@ -72,7 +84,7 @@ describe('DatatablesTest', () => {
         expect(sec).to.be.lessThan(30);
     }).timeout(0);
 
-    it.only('handles 150 concurrent requests', async () => {
+    it('handles 150 concurrent requests', async () => {
         let promises: Promise<any>[] = [];
         const requestCount = 150;
 

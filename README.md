@@ -24,6 +24,11 @@ npm i turbo-datatables-response
     // Set the inputs from the client.
     datatables.setInputs(inputs);
 
+    // Edit values of the fly.
+    datatables.edit('name', (row) => {
+        return 'Test '+row.name;
+    });
+
     // Generates the response.
     let response = await datatables.make();
 
@@ -33,6 +38,6 @@ npm i turbo-datatables-response
 
 ## Todo
 
-- [ ] Allow to modify columns values.
+- [x] Allow to modify columns values.
 - [ ] Allow to modify columns labels.
 - [ ] Allow to add columns.

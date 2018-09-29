@@ -1,5 +1,5 @@
 
-export interface Column
+export interface IColumn
 {
     name: string;
     label: string;

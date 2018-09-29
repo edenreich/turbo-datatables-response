@@ -1,5 +1,5 @@
 import { Pool, createPool, PoolConfig, MysqlError, PoolConnection } from 'mysql';
-import { Row } from '../interfaces/Row';
+import { IRow } from '../interfaces/IRow';
 
 export class Database
 {
@@ -50,9 +50,9 @@ export class Database
         return Promise.resolve(Database.pool.end());
     }
 
-    public query(sql: string, binds?: any): Promise<Row[]>
+    public query(sql: string, binds?: any): Promise<IRow[]>
     {
-        return new Promise<Row[]>((resolve, reject) => {
+        return new Promise<IRow[]>((resolve, reject) => {
             Database.pool.getConnection((err: MysqlError, connection: PoolConnection) => {        
                 if (err) {
                     if (err.code === 'PROTOCOL_CONNECTION_LOST') {
@@ -68,7 +68,7 @@ export class Database
                     }
                 }
 
-                connection.query(sql, binds, (err, result: Row[]) => {    
+                connection.query(sql, binds, (err, result: IRow[]) => {    
                     // Once we have the result
                     // Release the connection back to the pool.
                     connection.release();

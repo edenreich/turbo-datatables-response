@@ -1,8 +1,11 @@
 import { Database } from './Database';
 import { Paginator } from './Paginator';
 import { Options } from '../interfaces/Options';
-import { Column } from '../interfaces/Column';
-import { Row } from '../interfaces/Row';
+import { Column } from '../classes/Column';
+import { IColumn } from '../interfaces/IColumn';
+import { Row } from '../classes/Row';
+import { IRow } from '../interfaces/IRow';
+import { ModifiedRow } from '../interfaces/ModifiedRow';
 
 export class Datatables
 {
@@ -10,11 +13,15 @@ export class Datatables
 
     private paginator: Paginator;
 
-    private columns: Column[];
+    private columns: IColumn[];
+
+    private rows: IRow[];
 
     private fetchableColumns: string[];
 
     private hiddenColumns: string[];
+
+    private modifiedRows: ModifiedRow[];
 
     private table: string;
 
@@ -28,6 +35,7 @@ export class Datatables
         this.columns = [];
         this.fetchableColumns = [];
         this.hiddenColumns = [];
+        this.modifiedRows = [];
         this.table = '';
     }
 
@@ -65,19 +73,8 @@ export class Datatables
         }
 
         this.columns = await this.getColumnNames(this.table);
+        this.columns = await this.filter(this.columns);
         const count: number = await this.getRecordsCount(this.table);
-
-        if (this.fetchableColumns && this.fetchableColumns.length > 0) {
-            this.columns = this.columns.filter((column: Column) => {
-                return this.fetchableColumns.indexOf(column.name) !== -1
-            });
-        }
-
-        if (this.hiddenColumns && this.hiddenColumns.length > 0) {
-            this.columns = this.columns.filter((column: Column) => {
-                return this.hiddenColumns.indexOf(column.name) === -1
-            });
-        }
 
         const column = this.columns[this.inputs.columnIndex || 0].name;
         const columns = this.columns.map(column => column.name).join(',');
@@ -102,17 +99,38 @@ export class Datatables
             LIMIT ${this.inputs.offset}, ${this.inputs.limit}
         `;
         
-        const items = await this.db.query(sql);
-        this.paginator.paginate(items, count, this.inputs.limit || 10, this.inputs.page);
+        this.rows = await this.db.query(sql);
+        this.rows = await this.pipeThroughModify(this.rows);
+        this.paginator.paginate(this.rows, count, this.inputs.limit || 10, this.inputs.page);
 
         return {
             columns: this.columns,
-            data: items,
+            data: this.rows,
             pagination: this.paginator.getPagination()
         };
     }
 
-    public setInputs(inputs: any): void
+    public async edit(columnName: string, callback: Function): Promise<void>
+    {
+        this.columns = await this.getColumnNames(this.table);
+        
+        let exist: boolean = false;
+
+        for (let column of this.columns) {
+            if (column.name === columnName) {
+                exist = true;
+            }
+        }
+
+        if (exist) {
+            const modifiedRow: ModifiedRow = { name: columnName, callback: callback };
+            this.modifiedRows.push(modifiedRow);
+        } else {
+            throw new Error('the specified column name does not exists!');
+        }
+    }
+
+    public async setInputs(inputs: any): Promise<void>
     {
         this.inputs.direction = (inputs.direction === 'desc') ? 'desc' : 'asc';
         this.inputs.search = escape(inputs.search || '');
@@ -122,17 +140,21 @@ export class Datatables
         this.inputs.offset = this.inputs.limit * (this.inputs.page - 1);
     }
 
-    protected async getColumnNames(tableName: string): Promise<Column[]>
+    protected async getColumnNames(tableName: string): Promise<IColumn[]>
     {
+        if (this.columns.length > 0) {
+            return this.columns;
+        }
+
         const config = this.db.getConnectionConfig();
         let database = config.database;
 
         const sql = "SELECT `COLUMN_NAME` FROM `INFORMATION_SCHEMA`.`COLUMNS` WHERE `TABLE_SCHEMA`='"+database+"' AND `TABLE_NAME`='"+tableName+"'";
         
-        const columns: Row[] = await this.db.query(sql);
+        const columns: IRow[] = await this.db.query(sql);
 
         return columns.map((dbcolumn: any) => {
-            const column: Column = { name: '', label: ''};
+            let column: IColumn = new Column;
             column.name = dbcolumn.COLUMN_NAME;
             column.label = dbcolumn.COLUMN_NAME.charAt(0).toUpperCase() + dbcolumn.COLUMN_NAME.substr(1);
             column.width = '';
@@ -143,9 +165,46 @@ export class Datatables
 
     protected async getRecordsCount(tableName: string): Promise<number>
     {
-        const count: Row[] = await this.db.query('SELECT COUNT(*) as `total` FROM ' + tableName);
+        const count: IRow[] = await this.db.query('SELECT COUNT(*) as `total` FROM ' + tableName);
 
         return parseInt(count[0].total, 10);
+    }
+
+    protected async filter(columns: IColumn[]): Promise<IColumn[]>
+    {
+        if (this.fetchableColumns && this.fetchableColumns.length > 0) {
+            columns = columns.filter((column: Column) => {
+                return this.fetchableColumns.indexOf(column.name) !== -1
+            });
+        }
+
+        if (this.hiddenColumns && this.hiddenColumns.length > 0) {
+            columns = columns.filter((column: Column) => {
+                return this.hiddenColumns.indexOf(column.name) === -1
+            });
+        }
+
+        return columns;
+    }
+
+    protected async pipeThroughModify(rows: IRow[]): Promise<IRow[]>
+    {
+        let newRows: IRow[] = [];
+
+        this.modifiedRows.forEach((modifiedRow: ModifiedRow) => {
+            rows.forEach((row) => {
+                let newRow: IRow = new Row;
+                
+                for (let prop in row) {
+                    newRow[prop] = row[prop];
+                }
+
+                newRow[modifiedRow.name] = modifiedRow.callback(row);
+                newRows.push(newRow);
+            });
+        });
+
+        return newRows;
     }
 }
 
