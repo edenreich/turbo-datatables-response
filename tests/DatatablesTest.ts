@@ -56,17 +56,42 @@ describe('DatatablesTest', () => {
         } 
     });
 
-    it.only('closes the database connection once a make function is complete', async () => {        
+    it('handles load of requests using mysql pool feature', async () => {        
+        const requestCount = 2000;
         const start = new Date().getTime();
 
-        for (let i = 1; i <= 5000; i++) {
-            let result = await client.get(`/users?page=${i}&limit=100`);
+        for (let i = 1; i <= requestCount; i++) {
+            await client.get(`/users?page=${i}&limit=100`);
         }
 
         const end = new Date().getTime();
 
-        console.log('operation took:', end-start, 'ms');
+        const ms = end-start;
+        const sec = ms/1000;
 
-        assert.isOk(true);
-    }).timeout(300000000);
+        expect(sec).to.be.lessThan(30);
+    }).timeout(0);
+
+    it.only('handles 150 concurrent requests', async () => {
+        let promises: Promise<any>[] = [];
+        const requestCount = 150;
+
+        for (let i = 1; i <= requestCount; i++) {
+            promises.push(client.get(`/users?page=${i}&limit=100`));
+        }
+
+        const result = await Promise.all(promises);
+
+        let allOk: boolean = true;
+
+        for (let i = 0; i < requestCount; i++) {
+            if (result[i].status !== 200) {
+                allOk = false;
+                break;
+            }
+        }
+
+        assert.isOk(allOk);
+
+    }).timeout(20000);
 })

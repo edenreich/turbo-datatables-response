@@ -20,8 +20,9 @@ export class Database
             }
 
             Database.config = {
-                connectTimeout: 15,
-                connectionLimit: 10,
+                acquireTimeout: 10000,
+                connectionLimit: 15,
+                queueLimit: 30,
                 host: process.env.TEST_DB_HOST || 'localhost',
                 user: process.env.TEST_DB_USER || 'root',
                 password: process.env.TEST_DB_PASSWORD || '',
