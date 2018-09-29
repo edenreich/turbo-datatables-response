@@ -1,11 +1,15 @@
 import { Database } from '../classes/Database';
 import { Paginator } from '../classes/Paginator';
 import { Datatables as DT } from '../classes/Datatables';
-import { Connection } from 'mysql';
+import { Pool } from 'mysql';
 
-export async function Datatables(connection?: Connection): Promise<DT> {
+export async function Datatables(connection?: Pool): Promise<DT> {
     
-    connection = connection || await Database.connect();
-    
+    if (connection) {
+        connection = connection
+    } else {
+        connection = await Database.connect();
+    }
+
     return new DT(new Database(connection), new Paginator);
 }

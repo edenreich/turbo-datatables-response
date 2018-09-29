@@ -45,7 +45,7 @@ describe('DatatablesTest', () => {
         }
     });
 
-    it.only('can change the limit of the records', async () => {
+    it('can change the limit of the records', async () => {
         try {
             const response = await client.get('/users?page=1&limit=50');
             expect(response.status).to.be.equal(200);
@@ -55,4 +55,18 @@ describe('DatatablesTest', () => {
             console.log(err);
         } 
     });
+
+    it.only('closes the database connection once a make function is complete', async () => {        
+        const start = new Date().getTime();
+
+        for (let i = 1; i <= 5000; i++) {
+            let result = await client.get(`/users?page=${i}&limit=100`);
+        }
+
+        const end = new Date().getTime();
+
+        console.log('operation took:', end-start, 'ms');
+
+        assert.isOk(true);
+    }).timeout(300000000);
 })

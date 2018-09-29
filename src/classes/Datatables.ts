@@ -1,7 +1,8 @@
 import { Database } from './Database';
 import { Paginator } from './Paginator';
-import { Options } from './Options';
-import { Column } from './Column';
+import { Options } from '../interfaces/Options';
+import { Column } from '../interfaces/Column';
+import { Row } from '../interfaces/Row';
 
 export class Datatables
 {
@@ -64,7 +65,7 @@ export class Datatables
         }
 
         this.columns = await this.getColumnNames(this.table);
-        const count = await this.getRecordsCount(this.table);
+        const count: number = await this.getRecordsCount(this.table);
 
         if (this.fetchableColumns && this.fetchableColumns.length > 0) {
             this.columns = this.columns.filter((column: Column) => {
@@ -121,13 +122,14 @@ export class Datatables
         this.inputs.offset = this.inputs.limit * (this.inputs.page - 1);
     }
 
-    protected async getColumnNames(tableName: string): Promise<any>
+    protected async getColumnNames(tableName: string): Promise<Column[]>
     {
-        const database = this.db.getConnection().config.database;
+        const config = this.db.getConnectionConfig();
+        let database = config.database;
 
         const sql = "SELECT `COLUMN_NAME` FROM `INFORMATION_SCHEMA`.`COLUMNS` WHERE `TABLE_SCHEMA`='"+database+"' AND `TABLE_NAME`='"+tableName+"'";
         
-        const columns = await this.db.query(sql);
+        const columns: Row[] = await this.db.query(sql);
 
         return columns.map((dbcolumn: any) => {
             const column: Column = { name: '', label: ''};
@@ -139,11 +141,11 @@ export class Datatables
         });
     }
 
-    protected async getRecordsCount(tableName: string)
+    protected async getRecordsCount(tableName: string): Promise<number>
     {
-        const count = await this.db.query('SELECT COUNT(*) as `total` FROM ' + tableName);
+        const count: Row[] = await this.db.query('SELECT COUNT(*) as `total` FROM ' + tableName);
 
-        return count[0].total;
+        return parseInt(count[0].total, 10);
     }
 }
 
