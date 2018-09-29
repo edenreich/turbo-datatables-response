@@ -15,16 +15,16 @@ npm i turbo-datatables-response
     // Optionally you can give the Datatables the mysql connection.
     const datatables = await Datatables();
     
+    // Set the inputs from the client.
+    datatables.setInputs(inputs);
+
     // supply the table name and the columns you need. 
     datatables.of('users').only(['id', 'name', 'email']);
     
     // or use the inverse
     // dt.of('users').hide(['password']);
-    
-    // Set the inputs from the client.
-    datatables.setInputs(inputs);
 
-    // Edit values of the fly.
+    // Edit rows values on the fly.
     datatables.edit('name', (row) => {
         return 'Test '+row.name;
     });
@@ -38,6 +38,5 @@ npm i turbo-datatables-response
 
 ## Todo
 
-- [x] Allow to modify columns values.
+- [x] Allow to modify rows values.
 - [ ] Allow to modify columns labels.
-- [ ] Allow to add columns.
