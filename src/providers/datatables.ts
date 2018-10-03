@@ -11,9 +11,7 @@ export { Row, Column, Options };
 
 export async function Datatables(connection?: Pool): Promise<DT> {
     
-    if (connection) {
-        connection = connection;
-    } else {
+    if (typeof connection == 'undefined') {
         connection = await Database.connect();
     }
 
