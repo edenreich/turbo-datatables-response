@@ -12,7 +12,7 @@ export { Row, Column, Options };
 export async function Datatables(connection?: Pool): Promise<DT> {
     
     if (connection) {
-        connection = connection
+        connection = connection;
     } else {
         connection = await Database.connect();
     }
