@@ -6,7 +6,6 @@ import { IRow as Row } from '../interfaces/IRow';
 import { IColumn as Column } from '../interfaces/IColumn';
 import { Options } from '../interfaces/Options';
 
-
 export { Row, Column, Options };
 
 export async function Datatables(connection?: Pool): Promise<DT> {
