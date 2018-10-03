@@ -189,22 +189,14 @@ export class Datatables
 
     protected async pipeThroughModify(rows: IRow[]): Promise<IRow[]>
     {
-        let newRows: IRow[] = [];
-
-        this.modifiedRows.forEach((modifiedRow: ModifiedRow) => {
-            rows.forEach((row) => {
-                let newRow: IRow = new Row;
-                
-                for (let prop in row) {
-                    newRow[prop] = row[prop];
-                }
-
-                newRow[modifiedRow.name] = modifiedRow.callback(row);
-                newRows.push(newRow);
+        this.modifiedRows.forEach((column: ModifiedRow) => {
+            rows = rows.map((row: IRow) => {
+                row[column.name] = column.callback(row);
+                return row;
             });
         });
 
-        return newRows;
+        return rows;
     }
 }
 

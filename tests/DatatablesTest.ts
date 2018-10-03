@@ -48,7 +48,7 @@ describe('DatatablesTest', () => {
     it('can change the limit of the records', async () => {
         try {
             const response = await client.get('/users?page=1&limit=50');
-            
+
             expect(response.status).to.be.equal(200);
             expect(response.data.hasOwnProperty('data')).to.be.equal(true);
             expect(response.data.data.length).to.be.equal(50);
@@ -57,7 +57,7 @@ describe('DatatablesTest', () => {
         } 
     });
 
-    it.only('changes the row values on the fly', async () => {
+    it('changes the row values on the fly', async () => {
         try {
             const response = await client.get('/users/modified?page=1&limit=50');
             expect(response.status).to.be.equal(200);
@@ -81,12 +81,12 @@ describe('DatatablesTest', () => {
         const ms = end-start;
         const sec = ms/1000;
 
-        expect(sec).to.be.lessThan(30);
+        expect(sec).to.be.lessThan(40);
     }).timeout(0);
 
-    it('handles 150 concurrent requests', async () => {
+    it('handles 100 concurrent requests', async () => {
         let promises: Promise<any>[] = [];
-        const requestCount = 150;
+        const requestCount = 100;
 
         for (let i = 1; i <= requestCount; i++) {
             promises.push(client.get(`/users?page=${i}&limit=100`));
